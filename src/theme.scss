@@ -1,0 +1,19 @@
+// COLORS
+$body-bg: #f7f6f0;
+$primary: #d3f36b;
+$secondary: #24282c;
+
+// TEXT
+// $font-weight-bolder: 800;
+
+// COMPONENTS
+// Close button
+$btn-close-width: 0.8em;
+$btn-close-height: $btn-close-width;
+
+.alert.alert-dismissible > .btn-close  {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@import '~bootstrap/scss/bootstrap.scss';
