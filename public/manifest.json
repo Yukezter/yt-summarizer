@@ -3,10 +3,8 @@
   "description": "A chrome extension that summarizes YouTube videos.",
   "version": "1.0",
   "manifest_version": 3,
-  "permissions": [
-    "declarativeContent"
- ],
- "host_permissions": ["http://localhost:3001/*"],
+  "permissions": ["declarativeContent", "tabs"],
+  "host_permissions": ["http://localhost:3001/*"],
   "action": {
     "default_title": "YouTube Summarizer",
     "default_popup": "./index.html"
@@ -16,7 +14,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://*.youtube.com/watch*"],
+      "matches": ["*://*.youtube.com/watch*"],
       "js": ["./static/js/content.js"]
     }
   ],

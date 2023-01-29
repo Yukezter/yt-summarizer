@@ -1,8 +1,5 @@
 export type DOMMessage = {
-  type: 'GET_VIDEO_DATA'
+  type: 'GET_ACTIVE_TAB_PAGE_HTML'
 }
 
-export type DOMMessageResponse = {
-  id: string
-  html: string
-}
+export type DOMMessageResponse = string

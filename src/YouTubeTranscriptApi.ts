@@ -1,8 +1,12 @@
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 
-const api = axios.create({
-  baseURL: process.env.NODE_ENV !== 'development' ? 'https:www.youtube.com' : undefined,
-})
+const opts: AxiosRequestConfig = {}
+
+if (process.env.NODE_ENV === 'production') {
+  opts.baseURL = 'https:www.youtube.com'
+}
+
+const client = axios.create(opts)
 
 export type TranslationLanguage = {
   language: string
@@ -60,7 +64,7 @@ export class Transcript {
   }
 
   fetch = async () => {
-    const { data: transcriptXmlString } = await api.get(this.url)
+    const { data: transcriptXmlString } = await client.get(this.url)
 
     const parser = new DOMParser()
     const doc = parser.parseFromString(transcriptXmlString, 'text/xml')
@@ -86,11 +90,13 @@ export class Transcript {
   }
 
   translate = (languageCode: string) => {
-    if (this.translationLanguages.length === 0) {
-      throw new TranscriptError(TranscriptErrorTypes.NOT_TRANSLATABLE)
-    }
+    // if (this.translationLanguages.length === 0) {
+    //   throw new TranscriptError(TranscriptErrorTypes.NOT_TRANSLATABLE)
+    // }
 
-    const data = this.translationLanguages.find(tl => tl.languageCode === languageCode)
+    const data = this.translationLanguages?.find(translationLanguage => {
+      return translationLanguage.languageCode === languageCode
+    })
 
     if (!data) {
       throw new TranscriptError(TranscriptErrorTypes.TRANSLATION_LANGUAGE_NOT_FOUND)
@@ -98,7 +104,7 @@ export class Transcript {
 
     return new Transcript(
       this.videoID,
-      `${this.url}&tlang=${languageCode}`,
+      `${this.url}&tlang=${data.languageCode}`,
       data.language,
       data.languageCode,
       true,
@@ -134,16 +140,15 @@ export class Transcripts {
 
   static build = (videoID: string, html: string) => {
     const captions = this._extractCaptions(html)
+    const captionTracks: CaptionTracks = []
+    const manuallyCreatedTranscripts: TranscriptsMap = {}
+    const generatedTranscripts: TranscriptsMap = {}
     const translationLanguages: TranslationLanguage[] = captions.translationLanguages.map(
       (tl: any) => ({
         language: tl.languageName.simpleText,
         languageCode: tl.languageCode,
       })
     )
-
-    const captionTracks: CaptionTracks = []
-    const manuallyCreatedTranscripts: TranscriptsMap = {}
-    const generatedTranscripts: TranscriptsMap = {}
 
     captions.captionTracks.forEach((caption: any) => {
       captionTracks.push({
@@ -153,7 +158,6 @@ export class Transcripts {
 
       const isGenerated = caption?.kind === 'asr'
       const transcriptsMap = isGenerated ? generatedTranscripts : manuallyCreatedTranscripts
-
       transcriptsMap[caption.languageCode] = new Transcript(
         videoID,
         caption.baseUrl,
@@ -231,12 +235,12 @@ export class Transcripts {
 }
 
 export class YouTubeTranscriptApi {
-  static listTranscripts = async (videoID: string, html?: string) => {
+  static getTranscripts = async (videoID: string, html?: string) => {
     if (html) {
       return Transcripts.build(videoID, html)
     }
 
-    const { data } = await api.get<string>('/watch', {
+    const { data } = await client.get<string>('/watch', {
       params: {
         v: videoID,
       },
@@ -246,7 +250,7 @@ export class YouTubeTranscriptApi {
   }
 
   static getTranscript = async (videoID: string, languages = ['en']) => {
-    const transcripts = await this.listTranscripts(videoID)
+    const transcripts = await this.getTranscripts(videoID)
     return transcripts.findTranscript(languages).fetch()
   }
 }

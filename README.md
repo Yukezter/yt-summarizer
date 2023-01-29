@@ -14,6 +14,6 @@ Create a .env file and add this:
 Create a build folder that will be used as the extension directory:
 `npm run build`
 
-### 3. Select the extension directory
+### 3. Add the extension to chrome
 
-On your chrome browser, go to your chrome extensions page (chrome://extensions) and turn 'Developer mode' on. Then, click 'Load Unpacked' and select the build folder found in the root directory of this project (created in step #2).
+On your chrome browser, go to the chrome extensions page (chrome://extensions) and turn 'Developer mode' on. Then, click 'Load Unpacked' and select the build folder found in the root directory of this project (created in step #2).

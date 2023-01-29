@@ -1,17 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 // COLORS
-$body-bg: #f7f6f0;
-$primary: #d3f36b;
+$body-bg: #14181a;
+$body-color: #fff;
+// $primary: #d3f36b
+$primary: $body-bg;
 $secondary: #24282c;
 
-// TEXT
-// $font-weight-bolder: 800;
+// TYPOGRAPHY
+$font-family-base: 'Poppins';
 
 // COMPONENTS
-// Close button
+
+// Modal
+$modal-content-bg: $secondary;
+
+// Button
 $btn-close-width: 0.8em;
 $btn-close-height: $btn-close-width;
 
-.alert.alert-dismissible > .btn-close  {
+.alert.alert-dismissible > .btn-close {
   top: 50%;
   transform: translateY(-50%);
 }
